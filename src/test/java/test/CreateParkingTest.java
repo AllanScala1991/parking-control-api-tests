@@ -23,6 +23,7 @@ public class CreateParkingTest {
     private static String block;
     private static Faker faker = new Faker();
     private static JSONObject createdParking;
+    private static String parkingSpotId;
 
     @BeforeClass // RODA APENAS UMA VEZ ANTES DOS TESTES
     public static void beforeAll() throws IOException {
@@ -54,7 +55,7 @@ public class CreateParkingTest {
         body.put("apartment", apartment);
         body.put("block", block);
 
-        given()
+        parkingSpotId = given()
                 .contentType("application/json")
                 .body(body)
                 .when()
@@ -62,7 +63,8 @@ public class CreateParkingTest {
                 .then()
                 .statusCode(201)
                 .body("id", is(notNullValue()))
-                .body("registrationDate", is(notNullValue()));
+                .body("registrationDate", is(notNullValue()))
+                .extract().path("id");
     }
 
     @Test
@@ -151,5 +153,6 @@ public class CreateParkingTest {
     @AfterClass
     public static void afterAll() throws IOException {
         ParkingUtils.deleteParking(createdParking.get("id").toString());
+        ParkingUtils.deleteParking(parkingSpotId);
     }
 }
